@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="backgrounds">
+        <item>#000000</item>
+        <item>#FCD10A</item>
+        <item>#20BBB1</item>
+        <item>#EF5099</item>
+        <item>#19A8E0</item>
+        <item>#92C83D</item>
+        <item>#057AA2</item>
+    </array>
+
+    <color name="hand_fill_ambient">#000000</color>
+    <color name="hand_outline_ambient">#FFFFFF</color>
+
+    <color name="hand_fill">#444444</color>
+    <color name="hand_outline">#FFFFFF</color>
+
+    <color name="second_hand_outline">#FF0000</color>
+    <color name="second_hand_fill">#880000</color>
+
+</resources>
