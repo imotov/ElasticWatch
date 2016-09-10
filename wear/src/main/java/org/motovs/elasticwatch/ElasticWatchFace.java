@@ -42,8 +42,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Digital watch face with seconds. In ambient mode, the seconds aren't displayed. On devices with
- * low-bit ambient mode, the text is drawn without anti-aliasing in ambient mode.
+ * Analog watch face with Elastic logo.
  */
 public class ElasticWatchFace extends CanvasWatchFaceService {
     /**
@@ -111,6 +110,9 @@ public class ElasticWatchFace extends CanvasWatchFaceService {
         float mSecLength;
         float mMinLength;
         float mHrLength;
+        float mHrOffset;
+        float mMinOffset;
+        float mDiam;
 
 
         boolean mAmbient;
@@ -170,7 +172,7 @@ public class ElasticWatchFace extends CanvasWatchFaceService {
             mHandOutlinePaint = new Paint();
             mHandOutlinePaint.setAntiAlias(true);
             mHandOutlinePaint.setColor(mHandStrokeColor);
-//            mHandOutlinePaint.setShadowLayer(5.0f, 1.0f, 1.0f, Color.GRAY);
+            mHandOutlinePaint.setShadowLayer(5.0f, 1.0f, 1.0f, Color.GRAY);
             mHandOutlinePaint.setStrokeCap(Paint.Cap.ROUND);
 
             mHandFillPaint = new Paint();
@@ -255,6 +257,7 @@ public class ElasticWatchFace extends CanvasWatchFaceService {
                     mHandFillPaint.setAntiAlias(!inAmbientMode);
                     mSecondHandOutlinePaint.setAntiAlias(!inAmbientMode);
                     mSecondHandFillPaint.setAntiAlias(!inAmbientMode);
+                    mHandOutlinePaint.setShadowLayer(inAmbientMode ? 0.0f : 5.0f, 1.0f, 1.0f, Color.GRAY);
                 }
 
                 mHandOutlinePaint.setColor(mAmbient ? mHandStrokeAmbientColor : mHandStrokeColor);
@@ -307,15 +310,19 @@ public class ElasticWatchFace extends CanvasWatchFaceService {
                 mSecLength = mCenterX * 0.95f;
                 mMinLength = mCenterX * 0.9f;
                 mHrLength = mCenterX * 0.6f;
+                mHrOffset =  mCenterX * 0.15f;
+                mMinOffset =  mCenterX * 0.2f;
 
                 mHandOutlinePaint.setStrokeWidth(mCenterX * 0.07f);
-                mHandFillPaint.setStrokeWidth(mCenterX * 0.04f);
+                mHandFillPaint.setStrokeWidth(mCenterX * 0.03f);
                 mSecondHandOutlinePaint.setStrokeWidth(mCenterX * 0.02f);
-                mSecondHandFillPaint.setStrokeWidth(mCenterX * 0.01f);
+                mSecondHandFillPaint.setStrokeWidth(mCenterX * 0.015f);
 
-                int shift = (int) (bounds.width() * 0.05);
+                int shift = (int) (bounds.width() * 0.07);
                 mLogoWhite.setBounds(shift, shift, bounds.width() - shift, bounds.height() - shift);
                 mLogoColor.setBounds(shift, shift, bounds.width() - shift, bounds.height() - shift);
+
+                mDiam = mCenterX * 0.04f;
 
             }
 
@@ -342,15 +349,21 @@ public class ElasticWatchFace extends CanvasWatchFaceService {
 
             int hours = mCalendar.get(Calendar.HOUR);
             float hrRot = ((hours + (minutes / 60f)) / 6f) * (float) Math.PI;
-            
+
             float minX = (float) Math.sin(minRot) * mMinLength;
             float minY = (float) -Math.cos(minRot) * mMinLength;
+            float minOffX = (float) Math.sin(minRot) * mMinOffset;
+            float minOffY = (float) -Math.cos(minRot) * mMinOffset;
+
             float hrX = (float) Math.sin(hrRot) * mHrLength;
             float hrY = (float) -Math.cos(hrRot) * mHrLength;
+            float hrOffX = (float) Math.sin(hrRot) * mHrOffset;
+            float hrOffY = (float) -Math.cos(hrRot) * mHrOffset;
 
-            canvas.drawLine(mCenterX, mCenterY, mCenterX + minX, mCenterY + minY, mHandOutlinePaint);
+            canvas.drawLine(mCenterX + minOffX, mCenterY + minOffY, mCenterX + minX, mCenterY + minY, mHandOutlinePaint);
             canvas.drawLine(mCenterX, mCenterY, mCenterX + minX, mCenterY + minY, mHandFillPaint);
-            canvas.drawLine(mCenterX, mCenterY, mCenterX + hrX, mCenterY + hrY, mHandOutlinePaint);
+
+            canvas.drawLine(mCenterX + hrOffX, mCenterY + hrOffY, mCenterX + hrX, mCenterY + hrY, mHandOutlinePaint);
             canvas.drawLine(mCenterX, mCenterY, mCenterX + hrX, mCenterY + hrY, mHandFillPaint);
 
             if (!mAmbient) {
@@ -360,8 +373,8 @@ public class ElasticWatchFace extends CanvasWatchFaceService {
                 canvas.drawLine(mCenterX, mCenterY, mCenterX + secX, mCenterY + secY, mSecondHandFillPaint);
             }
 
-            canvas.drawCircle(mCenterX, mCenterY, mCenterX * 0.065f, mHandOutlinePaint);
-            canvas.drawCircle(mCenterX, mCenterY, mCenterX * 0.06f, mHandFillPaint);
+            //canvas.drawCircle(mCenterX, mCenterY, mCenterX * 0.065f, mHandOutlinePaint);
+            canvas.drawCircle(mCenterX, mCenterY, mDiam, mHandFillPaint);
 
         }
 
